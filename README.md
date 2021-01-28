@@ -1,3 +1,5 @@
+# Assuming cache aside?
+
 # mmcache
 
 Low latency persistent global cache library to cache `objects` and `responses` utilizing Macrometa GDN.
@@ -13,13 +15,18 @@ npm install mmcache
 ### Browser
 ```
 TBD
+// browser's own caches - ETag, etc
+// route based caching - middleware + SSR
+// https://redis.io/topics/client-side-caching
+// browser direct - API key will be exposed in browser's code
 ```
 
 ### Node
 ```
 var options = {
   url: 'paas.gdn.macrometa.io',
-  apikey: 'xxxxxx'
+  apikey: 'xxxxxx',
+  defaultTTL?: number(time)
 };
 
 // create cache. 
@@ -43,42 +50,46 @@ Create a `default` cache or a cache with given `name`. **options** is a dictiona
 ```
 var options = {
   url: 'paas.gdn.macrometa.io',
-  apikey: 'xxxxxx'
+  apikey: 'xxxxxx',
+  defaultTTL?: number(time)
 };
 ```
 
-#### cache.set(`key`, `value`, `[ttl]`)
+#### cache.set(`key`, `value`, `[ttl]`): Promise
 
 Cache data or update an existing record.
 
 * `key` Unique key identifying the cache entry
 * `value` Cached value  
-* `ttl` Time to live in seconds (optional) 
+* `ttl` Time to live in seconds (optional) . Takes `defaultTTL` if not provided
 
-#### cache.get(`key`, `[callback]`)
+#### cache.get(`key`, `[callback]`): Promise
 
 Get cached value. Returns cached value (or undefined) if no callback was provided. Always returns undefined if callback argument is present.
 
 * `key` Key identifying the cache entry
 * `callback` Return value in callback if record exists (optional)
 
-#### cache.del(`key`)
+#### cache.del(`key`): Promise
 
 Delete cached entry. Returns true if the record existed, false if not.
 
 * `key` Key identifying the cache
 
-#### cache.clear()
+#### cache.clear(): Promise
 
 Clear all cached data. Returns number of cleared records.
 
-#### cache.size()
+#### cache.size(): Promise
                 
 Returns number of cached records.
 
-#### cache.keys(limit, offset)
+#### cache.keys(limit, offset): Promise
 
 Returns list of keys in a given cache. At a time only 100 (or is it 1000?) keys are returned.
+
+#### cache.allKeys(): Promise
+Returns list of all keys in a given cache.
 
 #### cache.response(req, resp)
 
