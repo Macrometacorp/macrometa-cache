@@ -80,14 +80,27 @@ Returns number of cached records.
 
 Returns list of keys in a given cache. At a time only 100 (or is it 1000?) keys are returned.
 
+### cache.response(req, resp)
+
+Cache the response.
+
+```
+const ssrCache = cache.response({
+  get: ({ req, res }) => ({
+    data: doSomething(req),
+    ttl: 7200000 // 2 hours
+  }),
+  send: ({ data, res, req }) => res.send(data)
+})
+```
 
 ## Links
-(To be removed later)
+(Used below to construct above APIs. Links to be removed later.)
 
 * https://github.com/cayasso/cacheman
 * https://github.com/dirkbonhomme/js-cache
 * https://github.com/kwhitley/apicache
-
+* https://github.com/Kikobeats/cacheable-response
 
 
 
