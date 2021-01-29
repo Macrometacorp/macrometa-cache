@@ -123,4 +123,5 @@ const ssrCache = cache.response({
 
 * For response caching, use. `Cache-key = HASH( url, SORT(params))`. 
   * Reason - this is a geo-replicated cache and should handle even if params are in different order. So the sort will help here.
+* The cache should work in NodeJS, Workers (CF Workers, Edge Workers) and Browser.
 
