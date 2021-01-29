@@ -43,7 +43,7 @@ var cache = new mmcache('todo', options);
 
 #### mmcache([name], options)
 
-* Create a `default` cache or a cache with given `name`.
+* Create a `default` cache (with name `mmcache`) or a cache with user supplied `name`.
 * Default `ttl` value is 3600 seconds.
 * **options** is a dictionary of variables to connect to GDN.
 
