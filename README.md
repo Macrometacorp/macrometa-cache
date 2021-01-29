@@ -80,7 +80,11 @@ Delete cached entry. Returns true if the record existed, false if not.
 
 #### cache.clear(): Promise
 
-Clear all cached data. Returns number of cleared records.
+Clear all cached data. Returns number of cleared records. Note: The cache itself is not deleted here.
+
+#### cache.deleteCache(): Promise
+
+Deletes the persistent cache.
 
 #### cache.size(): Promise
                 
