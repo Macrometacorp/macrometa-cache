@@ -1,8 +1,6 @@
-# Assuming cache aside?
-
 # mmcache
 
-Low latency persistent global cache library to cache `objects` and `responses` utilizing Macrometa GDN.
+Low latency persistent global cache library to cache `objects` and `responses` utilizing Macrometa GDN. It is a side cache.
 
 ## Installation
 
@@ -87,10 +85,6 @@ Clear all cached data. Returns number of cleared records.
 #### cache.size(): Promise
                 
 Returns number of cached records.
-
-#### cache.keys(limit, offset): Promise
-
-Returns list of keys in a given cache. At a time only 100 (or is it 1000?) keys are returned.
 
 #### cache.allKeys(): Promise
 Returns list of all keys in a given cache.
