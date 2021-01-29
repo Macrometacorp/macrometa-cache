@@ -43,7 +43,7 @@ var cache = new mmcache('todo', options);
 
 ## API
 
-#### mmcache([name], options)
+#### mmcache([name], [TTL], options)
 
 Create a `default` cache or a cache with given `name`. **options** is a dictionary of variables to connect to GDN.
 
