@@ -43,15 +43,17 @@ var cache = new mmcache('todo', options);
 
 ## API
 
-#### mmcache([name], [TTL], options)
+#### mmcache([name], options)
 
-Create a `default` cache or a cache with given `name`. **options** is a dictionary of variables to connect to GDN.
+* Create a `default` cache or a cache with given `name`.
+* Default `ttl` value is 3600 seconds.
+* **options** is a dictionary of variables to connect to GDN.
 
 ```
 var options = {
   url: 'paas.gdn.macrometa.io',
   apikey: 'xxxxxx',
-  defaultTTL?: number(time)
+  ttl: `seconds` (optional)
 };
 ```
 
@@ -61,7 +63,9 @@ Cache data or update an existing record.
 
 * `key` Unique key identifying the cache entry
 * `value` Cached value  
-* `ttl` Time to live in seconds (optional) . Takes `defaultTTL` if not provided
+* `ttl` Time to live in seconds (optional). 
+  * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
+  * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
 
 #### cache.get(`key`, `[callback]`): Promise
 
