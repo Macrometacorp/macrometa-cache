@@ -24,7 +24,7 @@ TBD
 var options = {
   url: 'paas.gdn.macrometa.io',
   apikey: 'xxxxxx',
-  defaultTTL?: number(time)
+  ttl: number(seconds)
 };
 
 // create cache. 
@@ -93,6 +93,8 @@ Returns number of cached records.
 #### cache.allKeys(): Promise
 Returns list of all keys in a given cache.
 
+#### cache.response(url, params)
+
 #### cache.response(req, resp)
 
 Cache the response.
@@ -122,4 +124,3 @@ const ssrCache = cache.response({
 * For response caching, use. `Cache-key = HASH( url, SORT(params))`. 
   * Reason - this is a geo-replicated cache and should handle even if params are in different order. So the sort will help here.
 
-* User should be able to specify default TTL when they create cache. This way, user doesn’t have to specify TTL mandatorily for every set(...) api call.
