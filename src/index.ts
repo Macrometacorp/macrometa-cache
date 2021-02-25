@@ -1,7 +1,7 @@
 import { Connection } from "./connection";
-import { IConnection } from "./types/connectionTypes";
+import { IConnection, SetResponse, GetResponse } from "./types/connectionTypes";
 import { KeyValue } from "./keyValue";
-import { sortParamsString, getsortedQueryParamsUrl, sha256 } from "./util/index";
+import { getsortedQueryParamsUrl, sha256 } from "./util/index";
 
 export default class MMCache extends Connection {
 
@@ -45,10 +45,7 @@ export default class MMCache extends Connection {
   }
 
   get(key: string): Promise<any> {
-    return this.keyValue.getValueForKey(key).then(
-      (data: any) => data,
-      () => false
-    );;
+    return this.keyValue.getValueForKey(key);
   }
 
   delete(key: string) {
@@ -77,18 +74,16 @@ export default class MMCache extends Connection {
     return this.keyValue.getKVKeys();
   }
 
-  setResponse(url: string, value: any, ttl?: number) {
-    const params = getsortedQueryParamsUrl(url);
-    const sortedParams = sortParamsString(params);
-    const key = `${sha256(`${url}${sortedParams}`)}`;
+  setResponse({ url, res, ttl, params }: SetResponse) {
+    const sortedUrl = getsortedQueryParamsUrl(url, params);
+    const key = `${sha256(sortedUrl)}`;
 
-    return this.set(key, value, ttl);
+    return this.set(key, res, ttl);
   }
 
-  getResponse(url: string) {
-    const params = getsortedQueryParamsUrl(url);
-    const sortedParams = sortParamsString(params);
-    const key = `${sha256(`${url}${sortedParams}`)}`;
+  getResponse({ url, params }: GetResponse) {
+    const sortedUrl = getsortedQueryParamsUrl(url, params);
+    const key = `${sha256(sortedUrl)}`;
 
     return this.get(key);
   }

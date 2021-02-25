@@ -23,3 +23,13 @@ export interface RequestOptions {
   path?: string;
   qs?: { [key: string]: any };
 };
+export interface SetResponse {
+  url: string;
+  res: any;
+  params?: { [key: string]: any };
+  ttl?: number;
+};
+export interface GetResponse {
+  url: string;
+  params?: { [key: string]: any };
+};

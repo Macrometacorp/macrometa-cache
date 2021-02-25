@@ -123,16 +123,18 @@ Returns number of cached records.
 
 Returns list of all keys in a given cache.
 
-#### cache.setResponse(`url`, `value`, `[ttl]`): Promise
+#### cache.setResponse({`url`, `res`, `[ttl]`, [params]}): Promise
 
 Cache api response or update an existing record.
 
 * `url` (string) Api url
-* `value` (Any) response to be stored
+* `res` (Any) response to be stored
 * `ttl` (Number) time to live in seconds (optional)
+* `params` (Object) Any extra params or request body (optional)
 
-#### cache.getResponse(`url`): Promise
+#### cache.getResponse({`url`, [params]}): Promise
 
 Returns cached response.
 
 * `url` (string) Api url
+* `params` (Object) Any extra params or request body (optional)

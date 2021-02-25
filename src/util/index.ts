@@ -1,6 +1,6 @@
 
-export const sortParamsString = (obj: any) => {
-  let result = "";
+export const sortParams = (obj: any) => {
+  let result = {};
   const keys = Object.keys(obj);
   if (keys.length > 0) {
     result = keys.sort().reduce(function (result: any, key: string) {
@@ -12,16 +12,27 @@ export const sortParamsString = (obj: any) => {
   return result;
 }
 
-export const getsortedQueryParamsUrl = (url: string) => {
+export const createQueryString = (params: { [key: string]: any }) => {
+  return Object.keys(params).map((key: any) => {
+    let val = params[key];
+    if (typeof val === 'object') {
+      val = createQueryString(val);
+    }
+    return `${key}=${val}`;
+  }).join('&');
+}
+
+export const getsortedQueryParamsUrl = (url: string, extraParams?: { [key: string]: any }) => {
   const splitUrl = url.split("/");
   const reqUrl = url.split("?")[0];
   const search = splitUrl[splitUrl.length - 1].split("?")[1];
   if (!search) {
     return reqUrl;
   }
-  const params = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}');
-  const sortedParams = sortParamsString(params);
-  const queryString = Object.keys(sortedParams).map((key: any) => `${key}=${sortedParams[key]}`).join('&');
+  const queryParams = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+  const params = { ...queryParams, ...extraParams };
+  const sortedParams = sortParams(params);
+  const queryString = createQueryString(sortedParams);
 
   return `${reqUrl}?${queryString}`;
 }
