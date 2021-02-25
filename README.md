@@ -22,7 +22,8 @@ TBD
 ### Node
 ```
 const mmcache = require('mmcache');
-var options = {
+
+const options = {
   url: string;
   apiKey: string;
   agent: Function | string;
@@ -33,18 +34,24 @@ var options = {
   headers: { [key: string]: string }; // (optional)
 };
 
-// create cache. 
-var cache = new mmcache(options);
+// create cache instance. 
+const cache = new mmcache(options);
+
+awiat cache.create(); // Creates a global KV collection with name passed in options.
+//if not passed it creates with name `mmcache`.
 
 ```
 
 **Notes:**
 
-* ```
-  import mmcache from 'mmcache'; 
-  var cache = new mmcache(options);
-  awiat cache.create(); // Creates a global KV collection with name passed in options. if not passed it creates with name `mmcache`.
-  ```
+```
+import mmcache from 'mmcache'; 
+
+const cache = new mmcache(options);
+
+awiat cache.create(); // Creates a global KV collection with name passed in options.
+//if not passed it creates with name `mmcache`.
+```
 
 ## API
 
@@ -52,12 +59,25 @@ var cache = new mmcache(options);
 
 * **options** is a dictionary of variables to connect to GDN and default values for KV collection.
 
+* `url` (String) Federation url
+* `apiKey` (String) api key 
+* `agent` (String | Function) agent to be used. ofr example `fetch`.
+* `name` (String) (optional) name of the cache. Deafult is `mmcache`.
+* `fabric` (String) (optional) name of the fabric. Default is `_system`.
+* `ttl` (Number) (optional) Time to live in seconds. Default is `3600 seconds`.
+* `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
+* `headers` (Object) (optional) If extra headers need to be passed.
+
 ```
 var options = {
-  url: 'paas.gdn.macrometa.io',
-  apikey: 'xxxxxx',
-  agent: 'fetch',
-  ttl: 3600
+  url: string;
+  apiKey: string;
+  agent: Function | string;
+  name: string; // (optional) If Collection is already created you can pass the name here.
+  fabric: string; // (optional)
+  ttl: number; // (optional)
+  absolutePath: boolean; // (optional)
+  headers: { [key: string]: string }; // (optional)
 };
 ```
 
@@ -69,9 +89,9 @@ Creates a global KV collection with name passed in options. if not passed it cre
 
 Cache data or update an existing record.
 
-* `key` Unique key identifying the cache entry
-* `value` Cached value  
-* `ttl` Time to live in seconds (optional). 
+* `key` (string) Unique key identifying the cache entry
+* `value` (Any) Cached value  
+* `ttl` (Number) Time to live in seconds (optional). 
   * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
   * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
 
