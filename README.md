@@ -69,7 +69,7 @@ awiat cache.create(); // Creates a global KV collection with name passed in opti
 * `headers` (Object) (optional) If extra headers need to be passed.
 
 ```
-var options = {
+const options = {
   url: string;
   apiKey: string;
   agent: Function | string;
@@ -99,13 +99,13 @@ Cache data or update an existing record.
 
 Returns cached value.
 
-* `key` Key identifying the cache entry
+* `key` (string) Key identifying the cache entry
 
 #### cache.delete(`key`): Promise
 
 Delete cached entry.
 
-* `key` Key identifying the cache
+* `key` (string) Key identifying the cache
 
 #### cache.clear(): Promise
 
@@ -127,13 +127,13 @@ Returns list of all keys in a given cache.
 
 Cache api response or update an existing record.
 
-* `url` Api url
-* `value` response to be stored
-* `ttl` time to live in seconds (optional)
+* `url` (string) Api url
+* `value` (Any) response to be stored
+* `ttl` (Number) time to live in seconds (optional)
 
 #### cache.getResponse(url): Promise
 
-* `url` Api url
+* `url` (string) Api url
 
 Returns cached response.
 
