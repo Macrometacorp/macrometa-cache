@@ -27,7 +27,7 @@ const options = {
   url: string;
   apiKey: string;
   agent: Function | string;
-  name: string; // (optional) If Collection is already created you can pass the name here.
+  name: string; // (optional) If Collection is already created you can provide the name here.
   fabric: string; // (optional)
   ttl: number; // (optional)
   absolutePath: boolean; // (optional)
@@ -37,8 +37,8 @@ const options = {
 // create cache instance. 
 const cache = new mmcache(options);
 
-awiat cache.create(); // Creates a global KV collection with name passed in options.
-//if not passed it creates with name `mmcache`.
+awiat cache.create(); // Creates a global KV collection with name provided in options.
+//if not provided, it creates with name `mmcache`.
 
 ```
 
@@ -49,8 +49,8 @@ import mmcache from 'mmcache';
 
 const cache = new mmcache(options);
 
-awiat cache.create(); // Creates a global KV collection with name passed in options.
-//if not passed it creates with name `mmcache`.
+awiat cache.create(); // Creates a global KV collection with name provided in options.
+//if not provided, it creates with name `mmcache`.
 ```
 
 ## API
@@ -66,7 +66,7 @@ awiat cache.create(); // Creates a global KV collection with name passed in opti
 * `fabric` (String) (optional) name of the fabric. Default is `_system`.
 * `ttl` (Number) (optional) Time to live in seconds. Default is `3600 seconds`.
 * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
-* `headers` (Object) (optional) If extra headers need to be passed.
+* `headers` (Object) (optional) If extra headers need to be provided.
 
 ```
 const options = {
@@ -83,7 +83,7 @@ const options = {
 
 #### cache.create(): Promise
 
-Creates a global KV collection with name passed in options. if not passed it creates with name `mmcache`.
+Creates a global KV collection with name provided in options. if not provided it creates with name `mmcache`.
 
 #### cache.set(`key`, `value`, `[ttl]`): Promise
 
