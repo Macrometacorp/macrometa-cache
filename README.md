@@ -21,39 +21,49 @@ TBD
 
 ### Node
 ```
+const mmcache = require('mmcache');
 var options = {
-  url: 'paas.gdn.macrometa.io',
-  apikey: 'xxxxxx',
-  ttl: number(seconds)
+  url: string;
+  apiKey: string;
+  agent: Function | string;
+  name: string; // (optional) If Collection is already created you can pass the name here.
+  fabric: string; // (optional)
+  ttl: number; // (optional)
+  absolutePath: boolean; // (optional)
+  headers: { [key: string]: string }; // (optional)
 };
 
 // create cache. 
 var cache = new mmcache(options);
 
-// or create cache with specific name.
-var cache = new mmcache('todo', options);
 ```
 
 **Notes:**
 
-* `var cache = new mmcache(options);` --> Creates a global KV collection with name `mmcache` if not present.
-* `var cache = new mmcache('todo', options);` ---> Creates a global KV collection with name `todo` if not present.
+* ```
+  import mmcache from 'mmcache'; 
+  var cache = new mmcache(options);
+  awiat cache.create(); // Creates a global KV collection with name passed in options. if not passed it creates with name `mmcache`.
+  ```
 
 ## API
 
-#### mmcache([name], options)
+#### mmcache(options)
 
-* Create a `default` cache (with name `mmcache`) or a cache with user supplied `name`.
-* Default `ttl` value is 3600 seconds.
-* **options** is a dictionary of variables to connect to GDN.
+* **options** is a dictionary of variables to connect to GDN and default values for KV collection.
 
 ```
 var options = {
   url: 'paas.gdn.macrometa.io',
   apikey: 'xxxxxx',
-  ttl: `seconds` (optional)
+  agent: 'fetch',
+  ttl: 3600
 };
 ```
+
+#### cache.create(): Promise
+
+Creates a global KV collection with name passed in options. if not passed it creates with name `mmcache`.
 
 #### cache.set(`key`, `value`, `[ttl]`): Promise
 
@@ -65,16 +75,15 @@ Cache data or update an existing record.
   * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
   * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
 
-#### cache.get(`key`, `[callback]`): Promise
+#### cache.get(`key`): Promise
 
-Get cached value. Returns cached value (or undefined) if no callback was provided. Always returns undefined if callback argument is present.
+Returns cached value.
 
 * `key` Key identifying the cache entry
-* `callback` Return value in callback if record exists (optional)
 
-#### cache.del(`key`): Promise
+#### cache.delete(`key`): Promise
 
-Delete cached entry. Returns true if the record existed, false if not.
+Delete cached entry.
 
 * `key` Key identifying the cache
 
@@ -91,37 +100,21 @@ Deletes the persistent cache.
 Returns number of cached records.
 
 #### cache.allKeys(): Promise
+
 Returns list of all keys in a given cache.
 
-#### cache.response(url, params)
+#### cache.setResponse(url, value, [ttl]): Promise
 
-#### cache.response(req, resp)
+Cache api response or update an existing record.
 
-Cache the response.
+* `url` Api url
+* `value` response to be stored
+* `ttl` time to live in seconds (optional)
 
-```
-const ssrCache = cache.response({
-  get: ({ req, res }) => ({
-    data: doSomething(req),
-    ttl: 7200000 // 2 hours
-  }),
-  send: ({ data, res, req }) => res.send(data)
-})
-```
+#### cache.getResponse(url): Promise
 
-## Links
-(Used below to construct above APIs. Links to be removed later.)
+* `url` Api url
 
-* https://github.com/cayasso/cacheman
-* https://github.com/dirkbonhomme/js-cache
-* https://github.com/kwhitley/apicache
-* https://github.com/Kikobeats/cacheable-response
+Returns cached response.
 
-
-
-## Comments...
-
-* For response caching, use. `Cache-key = HASH( url, SORT(params))`. 
-  * Reason - this is a geo-replicated cache and should handle even if params are in different order. So the sort will help here.
-* The cache should work in NodeJS, Workers (CF Workers, Edge Workers) and Browser.
 
