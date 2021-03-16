@@ -4,24 +4,25 @@ Low latency persistent global cache library to cache `objects` and `responses` u
 
 ## Installation
 
-```
-npm install mmcache
+``` bash
+$ npm install mmcache
 ```
 
 ## Usage
 
-```
+```javascript
 import mmcache from "mmcache"; // Browser
-// or
+// OR
 const mmcache = require('mmcache'); // Node
 
+
+// Initialize
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
 });
 await cache.create(); // This step is required to create cache in GDN.
-
-// or
+// OR
 
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
@@ -29,6 +30,7 @@ const cache = new mmcache({
   ttl: 120
 });
 await cache.create("sampleCache");
+
 
 // Set the value
 cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
@@ -52,7 +54,6 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   });
 });
-
 ```
 
 ## API
@@ -69,7 +70,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
 * `headers` (Object) (optional) If extra headers need to be provided.
 
-```
+```javascript
 const options = {
   url: "https://gdn.paas.macrometa.io";
   apiKey: "XXXX";
@@ -90,7 +91,7 @@ Creates a global KV collection with given name. if not provided it creates with 
 
   Name of the KV collection
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -127,7 +128,7 @@ Cache data or update an existing record.
   * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
   * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -160,7 +161,7 @@ Returns cached value of given key.
 
   Unique key identifying the cache entry
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -184,7 +185,7 @@ Delete cached entry.
 
   Unique key identifying the cache entry
   
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -204,7 +205,7 @@ cache.delete('cacheKey', function (error, data){
 
 Clears all cached data. Returns number of cleared records. Note: The cache itself is not deleted here.
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -224,7 +225,7 @@ cache.clear((error, data) => {
 
 Deletes the persistent cache.
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -244,7 +245,7 @@ cache.deleteCache((error, data) => {
                 
 Returns number of cached records.
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -278,7 +279,7 @@ Returns list of all keys in a given cache.
 
     Order the results asc or desc. Default asc
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -316,7 +317,7 @@ Cache api response or update an existing record.
 
     Any extra params or request body
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -346,7 +347,7 @@ Returns cached response.
 
     Any extra params or request body
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
@@ -370,7 +371,7 @@ returns updated data with key and value.
 
   The name of the subscription.
 
-```
+```javascript
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
