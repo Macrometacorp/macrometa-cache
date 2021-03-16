@@ -58,15 +58,15 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
 ## API
 
-#### mmcache(options)
+### mmcache(options)
 
-* **options** is a dictionary of variables to connect to GDN and default values for KV collection.
+**options** is a dictionary of variables to connect to GDN and default values for KV collection.
 
 * `url` (String) GDN url. Default is `https://gdn.paas.macrometa.io`
 * `apiKey` (String) api key.
 * `agent` (String | Function) Agent to be used. Default is `fetch`.
 * `fabricName` (String) (optional) Name of the fabric. Default is `_system`.
-* `ttl` (Number) (optional) Time to live in seconds. Default is `3600 seconds`.
+* `ttl` (Number) (optional) Time to live in seconds. -1 means no expiration. Default is `3600 seconds`.
 * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
 * `headers` (Object) (optional) If extra headers need to be provided.
 
@@ -78,14 +78,15 @@ const options = {
   fabricName: "_system";
   ttl: 3600;
 };
+
 const cache = new mmcache(options);
 ```
 
-#### cache.create([name], [callback]): Promise
+### cache.create([name], [callback]): Promise
 
 Creates a global KV collection with given name. if not provided it creates with name `mmcache`.
 
-@(Info)(Note:-)(This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.)
+:bulb: **Note:** This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.
 
 - **name**: `String` (optional)
 
@@ -111,7 +112,7 @@ cache.create("myCache", (error, data) => {
 
 ```
 
-#### cache.set(`key`, `value`, `[ttl]`, `[callback]`): Promise
+### cache.set(`key`, `value`, `[ttl]`, `[callback]`): Promise
 
 Cache data or update an existing record.
 
@@ -127,6 +128,7 @@ Cache data or update an existing record.
 
   * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
   * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
+  * -1 means no expiration.
 
 ```javascript
 const cache = new mmcache({
@@ -153,7 +155,7 @@ cache.set('cacheKey', { foo: 'bar' }, function (error, data) { // Without ttl
 
 ```
 
-#### cache.get(`key`, `[callback]`): Promise
+### cache.get(`key`, `[callback]`): Promise
 
 Returns cached value of given key.
 
@@ -177,7 +179,7 @@ cache.get('cacheKey', function (error, data) {
 });
 ```
 
-#### cache.delete(`key`, `[callback]`): Promise
+### cache.delete(`key`, `[callback]`): Promise
 
 Delete cached entry.
 
@@ -201,7 +203,7 @@ cache.delete('cacheKey', function (error, data){
 });
 ```
 
-#### cache.clear(`[callback]`): Promise
+### cache.clear(`[callback]`): Promise
 
 Clears all cached data. Returns number of cleared records. Note: The cache itself is not deleted here.
 
@@ -221,7 +223,7 @@ cache.clear((error, data) => {
 });
 ```
 
-#### cache.deleteCache(`[callback]`): Promise
+### cache.deleteCache(`[callback]`): Promise
 
 Deletes the persistent cache.
 
@@ -241,7 +243,7 @@ cache.deleteCache((error, data) => {
 });
 ```
 
-#### cache.size(`[callback]`): Promise
+### cache.size(`[callback]`): Promise
                 
 Returns number of cached records.
 
@@ -261,7 +263,7 @@ cache.size((error, data) => {
 });
 ```
 
-#### cache.allKeys(`[opts]`, `[callback]`): Promise
+### cache.allKeys(`[opts]`, `[callback]`): Promise
 
 Returns list of all keys in a given cache.
 
@@ -295,7 +297,7 @@ cache.allKeys({offset: 100, limit: 4, order: "desc"}, (error, data) => {
 });
 ```
 
-#### cache.setResponse(`inputs`, `[callback]`): Promise
+### cache.setResponse(`inputs`, `[callback]`): Promise
 
 Cache api response or update an existing record.
 
@@ -311,7 +313,7 @@ Cache api response or update an existing record.
 
   - **ttl**: `Number` (optional)
 
-    time to live in seconds.
+    time to live in seconds. -1 means no expiration.
 
   - **params**: `Object` (optional)
 
@@ -333,7 +335,7 @@ cache.setResponse({ url: "http://dummy.restapiexample.com/api/v1/update?qs=123",
 });
 ```
 
-#### cache.getResponse(`inputs`, `[callback]`): Promise
+### cache.getResponse(`inputs`, `[callback]`): Promise
 
 Returns cached response.
 
@@ -363,7 +365,7 @@ cache.getResponse({url: "http://dummy.restapiexample.com/api/v1/update?qs=123"},
 });
 ```
 
-#### cache.onCacheUpdate(`subscriptionName`, `callback`): Promise
+### cache.onCacheUpdate(`subscriptionName`, `callback`): Promise
 
 returns updated data with key and value.
 
