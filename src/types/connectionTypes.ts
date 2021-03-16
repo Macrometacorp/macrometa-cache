@@ -2,8 +2,7 @@ export interface IConnection {
   url: string;
   apiKey: string;
   agent: Function | string;
-  name?: string;
-  fabric?: string;
+  fabricName?: string;
   ttl?: number;
   absolutePath?: boolean;
   headers?: { [key: string]: string };
@@ -22,14 +21,27 @@ export interface RequestOptions {
   body?: any;
   path?: string;
   qs?: { [key: string]: any };
+  absolutePath?: boolean;
 };
 export interface SetResponse {
   url: string;
-  res: any;
+  data: any;
   params?: { [key: string]: any };
   ttl?: number;
 };
 export interface GetResponse {
   url: string;
   params?: { [key: string]: any };
+};
+
+export interface UrlInfo {
+  absolutePath?: boolean;
+  path?: string;
+  qs?: string | { [key: string]: any };
+};
+
+export interface AllKeysOptions {
+  offset?: number;
+  limit?: number;
+  order?: string;
 };

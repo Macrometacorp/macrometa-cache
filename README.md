@@ -28,7 +28,7 @@ const options = {
   apiKey: string;
   agent: Function | string;
   name: string; // (optional) If Collection is already created you can provide the name here.
-  fabric: string; // (optional)
+  fabricName: string; // (optional)
   ttl: number; // (optional)
   absolutePath: boolean; // (optional)
   headers: { [key: string]: string }; // (optional)
@@ -63,7 +63,7 @@ awiat cache.create(); // Creates a global KV collection with name provided in op
 * `apiKey` (String) api key 
 * `agent` (String | Function) agent to be used. ofr example `fetch`.
 * `name` (String) (optional) name of the cache. Deafult is `mmcache`.
-* `fabric` (String) (optional) name of the fabric. Default is `_system`.
+* `fabricName` (String) (optional) name of the fabric. Default is `_system`.
 * `ttl` (Number) (optional) Time to live in seconds. Default is `3600 seconds`.
 * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
 * `headers` (Object) (optional) If extra headers need to be provided.
@@ -74,7 +74,7 @@ const options = {
   apiKey: string;
   agent: Function | string;
   name: string; // (optional) If Collection is already created you can pass the name here.
-  fabric: string; // (optional)
+  fabricName: string; // (optional)
   ttl: number; // (optional)
   absolutePath: boolean; // (optional)
   headers: { [key: string]: string }; // (optional)

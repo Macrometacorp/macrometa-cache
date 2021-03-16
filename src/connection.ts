@@ -1,26 +1,24 @@
-import { IConnection, IOptions, RequestOptions } from "./types/connectionTypes";
+import { IConnection, IOptions, RequestOptions, UrlInfo } from "./types/connectionTypes";
 import { stringConstants } from "./util/constants/stringConstants";
+import { createQueryString } from "./util/index";
 
 export class Connection {
   private _url: string;
-  private _apiKey: string;
-  private _agent: Function | string;
-  private _fabric?: string = "_system";
-  private _absolutePath?: boolean = false;
+  private _agent: Function | string = "fetch";
+  private _fabricName: string = "_system";
   private _headers?: { [key: string]: string };
+  private _tenantName: string = "_mm";
 
   constructor(config: IConnection) {
-    const { url, fabric, apiKey, absolutePath, agent, headers } = config;
-    this._url = url;
-    this._apiKey = apiKey;
-    this._agent = agent;
+    const { url, fabricName, apiKey, agent, headers } = config;
+    this._url = url || "https://gdn.paas.macrometa.io";
 
-    if (fabric) {
-      this._fabric = fabric;
+    if(agent) {
+      this._agent = agent;
     }
 
-    if (absolutePath) {
-      this._absolutePath = absolutePath;
+    if (fabricName) {
+      this._fabricName = fabricName;
     }
 
     if (headers) {
@@ -30,10 +28,10 @@ export class Connection {
     if (apiKey) {
       this._headers = {
         ...this._headers,
-        authorization: `apikey ${this._apiKey}`,
+        authorization: `apikey ${apiKey}`,
       };
+      this._tenantName = this._extractTenantName(apiKey);
     }
-
   }
 
   private _getHttpClient() {
@@ -48,15 +46,7 @@ export class Connection {
   }
 
   private get _getUrl() {
-    let apiUrl = this._url;
-
-    if (!this._absolutePath) {
-      apiUrl = `https://api-${apiUrl.split("https://")[1]}`;
-
-      if (!!this._fabric) {
-        apiUrl += `/_fabric/${this._fabric}`;
-      }
-    }
+    const apiUrl = `https://api-${this._url.split("https://")[1]}`;
     return apiUrl;
   }
 
@@ -72,21 +62,45 @@ export class Connection {
     return options;
   }
 
-  request({
-    method = "GET",
-    body,
-    path,
-    qs
-  }: RequestOptions) {
-    let url = `${this._getUrl}${path}`;
-    let params = '';
+  private _extractTenantName(apiKey: string) {
+    let apiKeyArr = apiKey.split(".");
+    apiKeyArr.splice(-2, 2);
+    return apiKeyArr.join(".");
+  }
 
+  getTenantName(): string {
+    return this._tenantName;
+  }
+
+  getFabricName(): string {
+    return this._fabricName;
+  }
+
+  private _buildUrl({ absolutePath = false, path, qs }: UrlInfo) {
+    let fullPath = this._getUrl;
+    if (!absolutePath) {
+      fullPath += `/_fabric/${this._fabricName}`;
+    }
+    if (path) fullPath += path;
     if (qs) {
-      if (typeof qs === "string") params = `?${qs}`;
-      else params = `?${(new URLSearchParams(qs).toString())}`;
+      if (typeof qs === "string") fullPath += `?${qs}`;
+      else fullPath += `?${createQueryString(qs)}`;
     }
 
-    url += params;
+    return fullPath;
+  }
+
+  request<T = { [key: string]: any }>(
+    {
+      method = "GET",
+      body,
+      path,
+      qs,
+      absolutePath = false
+    }: RequestOptions,
+    getter?: (error: boolean, res: { [key: string]: any }) => T
+  ) {
+    const url = this._buildUrl({absolutePath, path, qs});
 
     return this._getHttpClient()(
       url,
@@ -97,12 +111,22 @@ export class Connection {
       const { ERROR_MESSAGE } = stringConstants;
 
       if (status && (status === 200 || status === 202)) {
+        if(getter) {
+          getter(false, result);
+        }
         return result;
       }
       if (status && status !== 200 && status >= 400) {
+        if(getter) {
+          getter(true, result);
+        }
         throw result;
       }
-      throw { code: 500, errorMessage: ERROR_MESSAGE };
+      const serverErrorRes = { code: 500, errorMessage: ERROR_MESSAGE };
+      if(getter) {
+        getter(true, serverErrorRes);
+      }
+      throw serverErrorRes
     });
   }
 
