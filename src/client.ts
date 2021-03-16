@@ -68,15 +68,12 @@ export default class Client extends Connection {
     const clearData = await this.keyValue.truncate();
 
     if (clearData.error) {
-      if (typeof cb === "function") {
-        cb(true, clearData);
-      }
+      (typeof cb === "function") && cb(true, clearData);
       return clearData;
     }
     const res = { ...count, ...clearData };
-    if (typeof cb === "function") {
-      cb(false, res);
-    }
+    (typeof cb === "function") && cb(false, res);
+
     return res;
   }
 
@@ -112,7 +109,7 @@ export default class Client extends Connection {
 
   async onCacheUpdate(
     subscriptionName: string,
-    cb?: Function
+    cb: Function
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
@@ -126,28 +123,19 @@ export default class Client extends Connection {
     const consumerOtp = await this.socketConnection.getOtp();
     const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
     const noopProducerOpenCallback = () => {
-      console.log("noop producer opened");
       setIntervalId = setInterval(() => {
         noopProducer.send(JSON.stringify({ payload: 'noop' }));
       }, 30000);
     };
     const closeWSConnection = () => {
-      console.log(`Closing WS connection for ${self.name}`);
       setIntervalId && clearInterval(setIntervalId);
     };
 
     noopProducer.on("open", noopProducerOpenCallback);
 
-    noopProducer.on("close", (e: Event) => console.log("noop producer closed ", e));
-
-    noopProducer.on("error", (e: Event) => console.log("noop producer errored ", e));
-
-    noopProducer.on("message", (msg: string) => console.log('received ack: %s', msg));
-
     consumer.on("error", () => {
-      const errorMessage = `Failed to establish WS connection for ${self.name}`;
-      console.log(errorMessage);
-      typeof cb === "function" && cb(true, { errorMessage });
+      const errorMessage = `Failed to give update for ${self.name}`;
+      (typeof cb === "function") && cb(true, { errorMessage });
     });
 
     consumer.on("message", (msg: any) => {
@@ -156,15 +144,11 @@ export default class Client extends Connection {
 
       if (payload !== "noop") {
         const data = JSON.parse(atob(payload));
-        typeof cb === "function" && cb(false, data);
+        (typeof cb === "function") && cb(false, data);
       }
     });
 
     consumer.on("close", closeWSConnection);
-
-    consumer.on("open", () => {
-      console.log(`Connection open for ${self.name}`)
-    });
   }
 
   async create(name?: string, cb?: Function) {
@@ -180,11 +164,11 @@ export default class Client extends Connection {
 
     const exist = await this.keyValue.exists();
     if (exist) {
-      typeof cb === "function" && cb(false, { status: 200, message: "Cache already exist!!" });
-      return { status: 200, message: "Cache already exist!!" };
+      const response = { error: true, errorMessage: `${this.name} already exist!!` };
+      (typeof cb === "function") && cb(true, response);
+      return response;
     }
 
     return this.keyValue.createCollection(true, cb);
   }
-
 }

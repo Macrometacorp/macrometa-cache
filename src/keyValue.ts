@@ -38,7 +38,7 @@ export class KeyValue {
         path: "/_api/kv",
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -50,7 +50,7 @@ export class KeyValue {
         path: `/_api/kv/${this.name}/count`,
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -64,7 +64,7 @@ export class KeyValue {
         qs: { ...opts, limit: !!limit ? limit : 100 }
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -76,7 +76,7 @@ export class KeyValue {
         path: `/_api/kv/${this.name}/value/${key}`,
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -91,7 +91,7 @@ export class KeyValue {
         },
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -103,7 +103,7 @@ export class KeyValue {
         path: `/_api/kv/${this.name}`,
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -115,7 +115,7 @@ export class KeyValue {
         path: `/_api/kv/${this.name}/value/${key}`,
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -128,7 +128,7 @@ export class KeyValue {
         body: keys
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -141,7 +141,7 @@ export class KeyValue {
         body: keyValuePairs
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
@@ -153,7 +153,7 @@ export class KeyValue {
         path: `/_api/kv/${this.name}/truncate`
       },
       (error, res) => {
-        typeof cb === "function" && cb(error, res);
+        (typeof cb === "function") && cb(error, res);
       }
     );
   }
