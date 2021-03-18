@@ -1,0 +1,78 @@
+{
+  "name": "mmcache",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "description": "The official C8 cache JavaScript driver.",
+  "homepage": "https://github.com/macrometacorp/mmcache",
+  "bugs": {
+    "url": "https://github.com/macrometacorp/mmcache/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/macrometacorp/mmcache.git"
+  },
+  "author": "Macrometa",
+  "keywords": [
+    "mmcache",
+    "c8",
+    "key-value",
+    "client",
+    "driver",
+    "api",
+    "http",
+    "rest"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/cjs/mmcache.d.ts",
+  "browser": {
+    "./lib/index.js": "./lib/cjs/index.js",
+    "./lib/cjs/util/webSocket.js": "./lib/cjs/util/webSocket.web.js"
+  },
+  "files": [
+    "lib/*.*",
+    "lib/async/*.*",
+    "lib/async/util/*.*",
+    "lib/async/types/*.*",
+    "lib/async/util/constants/*.*",
+    "lib/cjs/*.*",
+    "lib/cjs/util/*.*",
+    "lib/cjs/types/*.*",
+    "lib/cjs/util/constants/*.*"
+  ],
+  "scripts": {
+    "declaration": "tsc -p declaration.tsconfig.json",
+    "build": "rimraf lib && npm-run-all --parallel build:* && cpy src/index.all.js --rename index.js lib/",
+    "prepare": "npm run build",
+    "lint": "eslint .",
+    "build:cjs": "tsc -p . --outDir ./lib/cjs/ --declarationMap true && cpy src/index.js lib/cjs/",
+    "build:async": "tsc -p . --outDir ./lib/async/ --target es2018 --declarationMap true && cpy src/index.js lib/async/",
+    "build:web": "webpack"
+  },
+  "devDependencies": {
+    "cpy-cli": "^3.1.1",
+    "eslint": "^7.8.1",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "npm-run-all": "^4.1.5",
+    "puppeteer": "^5.2.1",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.1.0",
+    "typescript": "^4.0.2",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "regenerator-runtime": "^0.11.1",
+    "source-map-support": "^0.5.0",
+    "webpack": "^3.0.0",
+    "ts-loader": "^3.2.0"
+  },
+  "dependencies": {
+    "ws": "^7.4.3"
+  }
+}
