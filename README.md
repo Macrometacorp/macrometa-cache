@@ -1,6 +1,6 @@
 # mmcache
 
-Low latency persistent global cache library to cache `objects` and `responses` utilizing Macrometa GDN. It is a side cache.
+Low latency persistent global side cache library to cache `objects` and `responses` utilizing Macrometa GDN.
 
 ## Installation
 
