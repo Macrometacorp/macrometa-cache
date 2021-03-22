@@ -1,4 +1,5 @@
 import { Connection } from "./connection";
+import { SocketConnections } from "./types/connectionTypes";
 import { createQueryString } from "./util/index";
 import { ws } from "./util/webSocket";
 
@@ -9,7 +10,7 @@ export enum StreamConstants {
 export class SocketConnection {
   private _connection: Connection;
   private name: string;
-  private socketConnections: any;
+  private socketConnections: Array<SocketConnections>;
 
   constructor(
     connection: Connection,
@@ -45,7 +46,7 @@ export class SocketConnection {
     for (let conn of this.socketConnections) {
       conn.terminate();
     }
-    
+
     this.socketConnections = [];
   }
 

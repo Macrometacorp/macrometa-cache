@@ -365,7 +365,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   });
   ```
 
-### cache.onCacheUpdate(`subscriptionName`, [`callback`], [`opts`]): Promise
+### cache.onCacheUpdate(`subscriptionName`, `callback`, [`opts`]): Promise
 
   Returns updated data with key and value. This method uses websocket to connect to defined KV collection.
 
@@ -375,7 +375,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
 
-    - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`.
+    - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`. :bulb: **Note:** noop basically a dummy message called no operation.
     - **sendNoopDelay**: The number of milliseconds after which noop message will be sent. default is `30000`.
     - **retries**: The maximum amount of times to retry the operation. Default is `10`. Seting this to `1` means `do it once, then retry it once`.
     - **factor**: The exponential factor to use. Default is `2`.

@@ -46,7 +46,7 @@ export interface AllKeysOptions {
   order?: string;
 };
 
-export interface connectOptions {
+export interface ConnectOptions {
   keepAlive?: boolean;
   sendNoopDelay?: number;
   retries?: number;
@@ -56,3 +56,11 @@ export interface connectOptions {
   randomize?: number | boolean;
   forever?: boolean;
 };
+
+export type SocketConnections = {
+  terminate: Function
+}
+
+export type RetryOperations = {
+  stop: Function,
+}

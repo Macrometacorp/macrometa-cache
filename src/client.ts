@@ -1,5 +1,5 @@
 import { Connection } from "./connection";
-import { IConnection, SetResponse, GetResponse, AllKeysOptions, connectOptions } from "./types/connectionTypes";
+import { IConnection, SetResponse, GetResponse, AllKeysOptions, ConnectOptions } from "./types/connectionTypes";
 import { KeyValue } from "./keyValue";
 import { SocketConnection } from "./socketConnection";
 import { getsortedQueryParamsUrl, sha256 } from "./util/index";
@@ -118,7 +118,7 @@ export default class Client extends Connection {
   onCacheUpdate(
     subscriptionName: string,
     cb: Function,
-    opts: connectOptions = {},
+    opts: ConnectOptions = {},
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
@@ -144,8 +144,8 @@ export default class Client extends Connection {
       forever,
     });
 
-    const wsConnAttempt = async (currentAttempt: any) => {
-      let setIntervalId: any;
+    const wsConnAttempt = async (currentAttempt: number) => {
+      let setIntervalId: ReturnType<typeof setInterval>;
       const self = this;
       const localDcDetails = await this.socketConnection.getLocalEdgeLocation();
       const dcUrl = localDcDetails.tags.url;
@@ -189,7 +189,7 @@ export default class Client extends Connection {
         retryAttempt();
       });
 
-      consumer.on("message", (msg: any) => {
+      consumer.on("message", (msg: string) => {
         const { messageId, payload } = JSON.parse(msg);
         consumer.send(JSON.stringify({ messageId }));
 

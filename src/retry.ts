@@ -1,26 +1,26 @@
-import { connectOptions } from "./types/connectionTypes";
+import { ConnectOptions } from "./types/connectionTypes";
+import { RetryOperations } from "./types/connectionTypes";
 const retry = require("retry");
 
 export default class RetryConn {
-  private retryOperation: any;
-  private retry: any;
+  private retryOperations: Array<RetryOperations>;
 
   constructor() {
-    this.retryOperation = [];
+    this.retryOperations = [];
   }
 
-  operation(config: connectOptions) {
-    this.retry = retry.operation(config);
-    this.retryOperation.push(this.retry);
+  operation(config: ConnectOptions) {
+    const retryOperation = retry.operation(config);
+    this.retryOperations.push(retryOperation);
 
-    return this.retry;
+    return retryOperation;
   }
 
   stopAlloperations() {
-    for (let retry of this.retryOperation) {
+    for (let retry of this.retryOperations) {
       retry.stop();
     }
-    
-    this.retryOperation = [];
+
+    this.retryOperations = [];
   }
 }
