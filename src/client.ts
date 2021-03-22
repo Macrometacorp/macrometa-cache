@@ -1,8 +1,9 @@
 import { Connection } from "./connection";
-import { IConnection, SetResponse, GetResponse, AllKeysOptions } from "./types/connectionTypes";
+import { IConnection, SetResponse, GetResponse, AllKeysOptions, connectOptions } from "./types/connectionTypes";
 import { KeyValue } from "./keyValue";
 import { SocketConnection } from "./socketConnection";
 import { getsortedQueryParamsUrl, sha256 } from "./util/index";
+import Retry from "./retry";
 
 export default class Client extends Connection {
 
@@ -11,6 +12,7 @@ export default class Client extends Connection {
   private ttl: number = 3600;
   private keyValue: KeyValue;
   private socketConnection: SocketConnection;
+  private retry: Retry;
 
   constructor(config: IConnection) {
     super(config);
@@ -23,6 +25,7 @@ export default class Client extends Connection {
 
     this.keyValue = new KeyValue(this._connection, this.name);
     this.socketConnection = new SocketConnection(this._connection, this.name);
+    this.retry = new Retry();
   }
 
   getExpireAtTimeStamp(ttl: number) {
@@ -107,48 +110,104 @@ export default class Client extends Connection {
     return this.get(key, cb);
   }
 
-  async onCacheUpdate(
+  closeAllConnections() {
+    this.retry.stopAlloperations();
+    this.socketConnection.closeAllSocketConnections();
+  }
+
+  onCacheUpdate(
     subscriptionName: string,
-    cb: Function
+    opts: connectOptions = {},
+    cb?: Function
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
     }
-    let setIntervalId: any;
-    const self = this;
-    const localDcDetails = await this.socketConnection.getLocalEdgeLocation();
-    const dcUrl = localDcDetails.tags.url;
-    const producerOtp = await this.socketConnection.getOtp();
-    const noopProducer = await this.socketConnection.noopProducer(dcUrl, producerOtp);
-    const consumerOtp = await this.socketConnection.getOtp();
-    const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
-    const noopProducerOpenCallback = () => {
-      setIntervalId = setInterval(() => {
-        noopProducer.send(JSON.stringify({ payload: 'noop' }));
-      }, 30000);
-    };
-    const closeWSConnection = () => {
-      setIntervalId && clearInterval(setIntervalId);
-    };
 
-    noopProducer.on("open", noopProducerOpenCallback);
+    if (typeof opts === "function") {
+      cb = opts;
+      opts = {};
+    }
 
-    consumer.on("error", () => {
-      const errorMessage = `Failed to give update for ${self.name}`;
-      (typeof cb === "function") && cb(true, { errorMessage });
+    const {
+      keepAlive = false,
+      noopSendTimeout = 30000,
+      retries = 10,
+      factor = 2,
+      minTimeout = 1000,
+      maxTimeout = Infinity,
+      randomize = false,
+      forever = false,
+    } = opts;
+
+    const retryOperation = this.retry.operation({
+      retries,
+      factor,
+      minTimeout,
+      maxTimeout,
+      randomize,
+      forever,
     });
 
-    consumer.on("message", (msg: any) => {
-      const { messageId, payload } = JSON.parse(msg);
-      consumer.send(JSON.stringify({ messageId }));
+    const wsConnAttempt = async (currentAttempt: any) => {
+      let setIntervalId: any;
+      const self = this;
+      const localDcDetails = await this.socketConnection.getLocalEdgeLocation();
+      const dcUrl = localDcDetails.tags.url;
+      const consumerOtp = await this.socketConnection.getOtp();
+      const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
+      if (keepAlive) {
+        const producerOtp = await this.socketConnection.getOtp();
+        const noopProducer = await this.socketConnection.noopProducer(dcUrl, { ...producerOtp, sendTimeoutMillis: noopSendTimeout });
+        const noopProducerOpenCallback = () => {
+          setIntervalId = setInterval(() => {
+            noopProducer.send(JSON.stringify({ payload: 'noop' }));
+          }, noopSendTimeout);
+        };
 
-      if (payload !== "noop") {
-        const data = JSON.parse(atob(payload));
-        (typeof cb === "function") && cb(false, data);
+        noopProducer.on("open", noopProducerOpenCallback);
+
+        noopProducer.on("close", () => {
+          setIntervalId && clearInterval(setIntervalId);
+        });
+
+        noopProducer.on("error", () => {
+          setIntervalId && clearInterval(setIntervalId);
+        });
       }
-    });
 
-    consumer.on("close", closeWSConnection);
+      const retryAttempt = () => {
+        if (retryOperation.retry("Retry connecting")) {
+          (typeof cb === "function") && cb(true, { retry: true, errorMessage: `Retry connecting ${self.name}: Attempt ${currentAttempt}` });
+          return;
+        } else {
+          (typeof cb === "function") && cb(true, { retry: false, errorMessage: "All retries failed. Connection closed!!" });
+        }
+      }
+
+      const closeWSConnection = () => {
+        setIntervalId && clearInterval(setIntervalId);
+        retryAttempt();
+      };
+
+      consumer.on("error", () => {
+        retryAttempt();
+      });
+
+      consumer.on("message", (msg: any) => {
+        const { messageId, payload } = JSON.parse(msg);
+        consumer.send(JSON.stringify({ messageId }));
+
+        if (payload !== "noop") {
+          const data = JSON.parse(atob(payload));
+          (typeof cb === "function") && cb(false, data);
+        }
+      });
+
+      consumer.on("close", closeWSConnection);
+    }
+
+    retryOperation.attempt(wsConnAttempt);
   }
 
   async create(name?: string, cb?: Function) {

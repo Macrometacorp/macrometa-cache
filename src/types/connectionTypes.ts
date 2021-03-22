@@ -45,3 +45,14 @@ export interface AllKeysOptions {
   limit?: number;
   order?: string;
 };
+
+export interface connectOptions {
+  keepAlive?: boolean;
+  noopSendTimeout?: number;
+  retries?: number;
+  factor?: number;
+  minTimeout?: number;
+  maxTimeout?: number;
+  randomize?: number | boolean;
+  forever?: boolean;
+};

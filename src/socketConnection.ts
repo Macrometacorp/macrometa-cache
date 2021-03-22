@@ -9,6 +9,7 @@ export enum StreamConstants {
 export class SocketConnection {
   private _connection: Connection;
   private name: string;
+  private socketConnections: any;
 
   constructor(
     connection: Connection,
@@ -16,6 +17,7 @@ export class SocketConnection {
   ) {
     this._connection = connection;
     this.name = name;
+    this.socketConnections = [];
   }
 
   getOtp() {
@@ -39,6 +41,14 @@ export class SocketConnection {
     );
   }
 
+  closeAllSocketConnections() {
+    for (let conn of this.socketConnections) {
+      conn.terminate();
+    }
+    
+    this.socketConnections = [];
+  }
+
   consumer(
     subscriptionName: string,
     dcName: string,
@@ -59,12 +69,14 @@ export class SocketConnection {
 
     let consumerUrl = `wss://api-${dcName}/_ws/ws/v2/consumer/${persist}/${tenant}/${region}.${dbName}/${
       this.name
-    }/${subscriptionName}`;
+      }/${subscriptionName}`;
 
     // Appending query params to the url
     consumerUrl = `${consumerUrl}?${queryParams}`;
+    const consumerConn = ws(consumerUrl);
+    this.socketConnections.push(consumerConn);
 
-    return ws(consumerUrl);
+    return consumerConn;
   }
 
   noopProducer(
@@ -86,11 +98,13 @@ export class SocketConnection {
 
     let noopProducerUrl = `wss://api-${dcName}/_ws/ws/v2/producer/${persist}/${tenant}/${region}.${dbName}/${
       this.name
-    }`;
+      }`;
 
     // Appending query params to the url
     noopProducerUrl = `${noopProducerUrl}?${queryParams}`;
+    const noopProducerConn = ws(noopProducerUrl);
+    this.socketConnections.push(noopProducerConn);
 
-    return ws(noopProducerUrl);
+    return noopProducerConn;
   }
 }
