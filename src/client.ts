@@ -117,21 +117,16 @@ export default class Client extends Connection {
 
   onCacheUpdate(
     subscriptionName: string,
+    cb: Function,
     opts: connectOptions = {},
-    cb?: Function
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
     }
 
-    if (typeof opts === "function") {
-      cb = opts;
-      opts = {};
-    }
-
     const {
       keepAlive = false,
-      noopSendTimeout = 30000,
+      sendNoopDelay = 30000,
       retries = 10,
       factor = 2,
       minTimeout = 1000,
@@ -158,11 +153,11 @@ export default class Client extends Connection {
       const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
       if (keepAlive) {
         const producerOtp = await this.socketConnection.getOtp();
-        const noopProducer = await this.socketConnection.noopProducer(dcUrl, { ...producerOtp, sendTimeoutMillis: noopSendTimeout });
+        const noopProducer = await this.socketConnection.noopProducer(dcUrl, { ...producerOtp, sendTimeoutMillis: sendNoopDelay });
         const noopProducerOpenCallback = () => {
           setIntervalId = setInterval(() => {
             noopProducer.send(JSON.stringify({ payload: 'noop' }));
-          }, noopSendTimeout);
+          }, sendNoopDelay);
         };
 
         noopProducer.on("open", noopProducerOpenCallback);

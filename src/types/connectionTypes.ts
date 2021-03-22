@@ -48,7 +48,7 @@ export interface AllKeysOptions {
 
 export interface connectOptions {
   keepAlive?: boolean;
-  noopSendTimeout?: number;
+  sendNoopDelay?: number;
   retries?: number;
   factor?: number;
   minTimeout?: number;
