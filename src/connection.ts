@@ -126,7 +126,7 @@ export class Connection {
       if(getter) {
         getter(true, serverErrorRes);
       }
-      throw serverErrorRes
+      throw serverErrorRes;
     });
   }
 

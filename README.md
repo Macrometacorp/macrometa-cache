@@ -267,7 +267,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   Returns list of all keys in a given cache.
 
-  - **opts**: `Object` (optional)
+  - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
 
     - **offset**: `String`
 
@@ -301,7 +301,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   Cache api response or update an existing record.
 
-  - **inputs**: `Object`
+  - **inputs**: `Object` is a JS object that can contain any of the following keys:
 
     - **url**: `String`
 
@@ -339,7 +339,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   Returns cached response.
 
-  - **inputs**: `Object`
+  - **inputs**: `Object` is a JS object that can contain any of the following keys:
 
     - **url**: `String`
 
@@ -365,13 +365,24 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   });
   ```
 
-### cache.onCacheUpdate(`subscriptionName`, `callback`): Promise
+### cache.onCacheUpdate(`subscriptionName`, `callback`, [`opts`]): Promise
 
-  Returns updated data with key and value.
+  Returns updated data with key and value. This method uses websocket to connect to defined KV collection.
 
   - **subscriptionName**: `string` (optional)
 
     The name of the subscription.
+
+  - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
+
+    - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`. :bulb: **Note:** noop basically a dummy message called no operation.
+    - **sendNoopDelay**: The number of milliseconds after which noop message will be sent. default is `30000`.
+    - **retries**: The maximum amount of times to retry the operation. Default is `10`. Seting this to `1` means `do it once, then retry it once`.
+    - **factor**: The exponential factor to use. Default is `2`.
+    - **minTimeout**: The number of milliseconds before starting the first retry. Default is `1000`.
+    - **maxTimeout**: The maximum number of milliseconds between two retries. Default is `Infinity`.
+    - **randomize**: Randomizes the timeouts by multiplying with a factor between `1` to `2`. Default is `false`.
+    - **forever**: Whether to retry forever, defaults to `false`.
 
   ```javascript
   const cache = new mmcache({
@@ -381,7 +392,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   await cache.create();
 
-  cache.onCacheUpdate("my-sub", (error, data) => {
+  cache.onCacheUpdate("my-sub", { retries: 2 }, (error, data) => {
         
     if (error) throw data.errorMessage;
 

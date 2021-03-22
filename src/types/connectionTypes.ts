@@ -23,12 +23,14 @@ export interface RequestOptions {
   qs?: { [key: string]: any };
   absolutePath?: boolean;
 };
+
 export interface SetResponse {
   url: string;
   data: any;
   params?: { [key: string]: any };
   ttl?: number;
 };
+
 export interface GetResponse {
   url: string;
   params?: { [key: string]: any };
@@ -45,3 +47,22 @@ export interface AllKeysOptions {
   limit?: number;
   order?: string;
 };
+
+export interface ConnectOptions {
+  keepAlive?: boolean;
+  sendNoopDelay?: number;
+  retries?: number;
+  factor?: number;
+  minTimeout?: number;
+  maxTimeout?: number;
+  randomize?: number | boolean;
+  forever?: boolean;
+};
+
+export type SocketConnections = {
+  terminate: Function
+}
+
+export type RetryOperations = {
+  stop: Function,
+}
