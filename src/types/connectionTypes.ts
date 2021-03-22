@@ -23,12 +23,14 @@ export interface RequestOptions {
   qs?: { [key: string]: any };
   absolutePath?: boolean;
 };
+
 export interface SetResponse {
   url: string;
   data: any;
   params?: { [key: string]: any };
   ttl?: number;
 };
+
 export interface GetResponse {
   url: string;
   params?: { [key: string]: any };
