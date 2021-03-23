@@ -26,6 +26,7 @@
   "typings": "lib/cjs/mmcache.d.ts",
   "browser": {
     "./lib/index.js": "./lib/cjs/index.js",
+    "./lib/cjs/util/atob.js": "./lib/cjs/util/atob.web.js",
     "./lib/cjs/util/webSocket.js": "./lib/cjs/util/webSocket.web.js"
   },
   "files": [

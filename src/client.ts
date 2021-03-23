@@ -4,6 +4,7 @@ import { KeyValue } from "./keyValue";
 import { SocketConnection } from "./socketConnection";
 import { getsortedQueryParamsUrl, sha256 } from "./util/index";
 import Retry from "./retry";
+import { atob } from "./util/atob";
 
 export default class Client extends Connection {
 
@@ -115,13 +116,18 @@ export default class Client extends Connection {
     this.socketConnection.closeAllSocketConnections();
   }
 
-  onCacheUpdate(
+  async onCacheUpdate(
     subscriptionName: string,
-    cb: Function,
     opts: ConnectOptions = {},
+    cb: Function = () => {},
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
+    }
+
+    if (typeof opts === "function") {
+      cb = opts;
+      opts = {};
     }
 
     const {
