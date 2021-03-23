@@ -368,6 +368,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 ### cache.onCacheUpdate(`subscriptionName`, [`opts`], [`callback`]):
 
   Returns updated data with key and value in callback for defined KV collection.
+  
   :bulb: **Note:** Usage of this api requires websocket connectivity support.
 
   - **subscriptionName**: `string` (optional)
@@ -377,6 +378,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
 
     - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`.
+    
     :bulb: **Note:** noop basically a dummy message called no operation.
     - **sendNoopDelay**: The number of milliseconds after which noop message will be sent. default is `30000`.
     - **retries**: The maximum amount of times to retry the operation. Default is `10`. Seting this to `1` means `do it once, then retry it once`.
