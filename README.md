@@ -1,11 +1,11 @@
-# mmcache
+# macrometa-cache
 
 Low latency persistent global side cache library to cache `objects` and `responses` utilizing Macrometa GDN.
 
 ## Installation
 
 ``` bash
-$ npm install mmcache
+$ npm install macrometa-cache
 ```
 
 ## Usage
