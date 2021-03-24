@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: resolve(__dirname, "lib"),
     filename: "web.js",
-    library: "mmcache",
+    library: "macrometa-cache",
     libraryTarget: "umd"
   },
   module: {

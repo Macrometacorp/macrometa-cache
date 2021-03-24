@@ -11,9 +11,9 @@ $ npm install mmcache
 ## Usage
 
 ```javascript
-import mmcache from "mmcache"; // Browser
+import mmcache from "macrometa-cache"; // Browser
 // OR
-const mmcache = require('mmcache'); // Node
+const mmcache = require('macrometa-cache'); // Node
 
 
 // Initialize
