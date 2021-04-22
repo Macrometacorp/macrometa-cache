@@ -58,7 +58,7 @@ export default class Client extends Connection {
   }
 
   delete(key: string, cb?: Function) {
-    return this.keyValue.deleteEntryForKey(key, cb);
+    return this.keyValue.deleteEntryForKey(key, cb)
   }
 
   deleteCache(cb?: Function) {
