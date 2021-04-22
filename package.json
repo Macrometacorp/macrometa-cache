@@ -51,6 +51,12 @@
     "build:web": "webpack"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "cpy-cli": "^3.1.1",
     "eslint": "^7.8.1",
     "eslint-config-standard": "^14.1.1",
@@ -60,22 +66,12 @@
     "eslint-plugin-standard": "^4.0.1",
     "npm-run-all": "^4.1.5",
     "puppeteer": "^5.2.1",
+    "regenerator-runtime": "^0.11.1",
     "rimraf": "^3.0.2",
+    "source-map-support": "^0.5.0",
+    "ts-loader": "^3.2.0",
     "tslib": "^2.1.0",
     "typescript": "^4.0.2",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.3",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "regenerator-runtime": "^0.11.1",
-    "source-map-support": "^0.5.0",
-    "webpack": "^3.0.0",
-    "ts-loader": "^3.2.0"
-  },
-  "dependencies": {
-    "retry": "^0.12.0",
-    "ws": "^7.4.3"
+    "webpack": "^3.0.0"
   }
 }

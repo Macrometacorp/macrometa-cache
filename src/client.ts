@@ -1,19 +1,18 @@
 import { Connection } from "./connection";
-import { IConnection, SetResponse, GetResponse, AllKeysOptions, ConnectOptions } from "./types/connectionTypes";
+import {
+  IConnection,
+  SetResponse,
+  GetResponse,
+  AllKeysOptions,
+} from "./types/connectionTypes";
 import { KeyValue } from "./keyValue";
-import { SocketConnection } from "./socketConnection";
 import { getsortedQueryParamsUrl, sha256 } from "./util/index";
-import Retry from "./retry";
-import { atob } from "./util/atob";
 
 export default class Client extends Connection {
-
   private _connection: Connection;
   private name: string = "mmcache";
   private ttl: number = 3600;
   private keyValue: KeyValue;
-  private socketConnection: SocketConnection;
-  private retry: Retry;
 
   constructor(config: IConnection) {
     super(config);
@@ -25,8 +24,6 @@ export default class Client extends Connection {
     }
 
     this.keyValue = new KeyValue(this._connection, this.name);
-    this.socketConnection = new SocketConnection(this._connection, this.name);
-    this.retry = new Retry();
   }
 
   getExpireAtTimeStamp(ttl: number) {
@@ -44,11 +41,16 @@ export default class Client extends Connection {
     const ttlVal = !!ttl ? ttl : this.ttl;
     const expireAt = this.getExpireAtTimeStamp(ttlVal);
 
-    return this.keyValue.insertKVPairs([{
-      _key,
-      value,
-      expireAt
-    }], cb)
+    return this.keyValue.insertKVPairs(
+      [
+        {
+          _key,
+          value,
+          expireAt,
+        },
+      ],
+      cb
+    );
   }
 
   get(key: string, cb?: Function): Promise<any> {
@@ -72,11 +74,11 @@ export default class Client extends Connection {
     const clearData = await this.keyValue.truncate();
 
     if (clearData.error) {
-      (typeof cb === "function") && cb(true, clearData);
+      typeof cb === "function" && cb(true, clearData);
       return clearData;
     }
     const res = { ...count, ...clearData };
-    (typeof cb === "function") && cb(false, res);
+    typeof cb === "function" && cb(false, res);
 
     return res;
   }
@@ -111,106 +113,6 @@ export default class Client extends Connection {
     return this.get(key, cb);
   }
 
-  closeAllConnections() {
-    this.retry.stopAlloperations();
-    this.socketConnection.closeAllSocketConnections();
-  }
-
-  async onCacheUpdate(
-    subscriptionName: string,
-    opts: ConnectOptions = {},
-    cb: Function = () => {},
-  ) {
-    if (!subscriptionName) {
-      throw "Please provide subscription name";
-    }
-
-    if (typeof opts === "function") {
-      cb = opts;
-      opts = {};
-    }
-
-    const {
-      keepAlive = false,
-      sendNoopDelay = 30000,
-      retries = 10,
-      factor = 2,
-      minTimeout = 1000,
-      maxTimeout = Infinity,
-      randomize = false,
-      forever = false,
-    } = opts;
-
-    const retryOperation = this.retry.operation({
-      retries,
-      factor,
-      minTimeout,
-      maxTimeout,
-      randomize,
-      forever,
-    });
-
-    const wsConnAttempt = async (currentAttempt: number) => {
-      let setIntervalId: ReturnType<typeof setInterval>;
-      const self = this;
-      const localDcDetails = await this.socketConnection.getLocalEdgeLocation();
-      const dcUrl = localDcDetails.tags.url;
-      const consumerOtp = await this.socketConnection.getOtp();
-      const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
-      if (keepAlive) {
-        const producerOtp = await this.socketConnection.getOtp();
-        const noopProducer = await this.socketConnection.noopProducer(dcUrl, { ...producerOtp, sendTimeoutMillis: sendNoopDelay });
-        const noopProducerOpenCallback = () => {
-          setIntervalId = setInterval(() => {
-            noopProducer.send(JSON.stringify({ payload: 'noop' }));
-          }, sendNoopDelay);
-        };
-
-        noopProducer.on("open", noopProducerOpenCallback);
-
-        noopProducer.on("close", () => {
-          setIntervalId && clearInterval(setIntervalId);
-        });
-
-        noopProducer.on("error", () => {
-          setIntervalId && clearInterval(setIntervalId);
-        });
-      }
-
-      const retryAttempt = () => {
-        if (retryOperation.retry("Retry connecting")) {
-          (typeof cb === "function") && cb(true, { retry: true, errorMessage: `Retry connecting ${self.name}: Attempt ${currentAttempt}` });
-          return;
-        } else {
-          (typeof cb === "function") && cb(true, { retry: false, errorMessage: "All retries failed. Connection closed!!" });
-        }
-      }
-
-      const closeWSConnection = () => {
-        setIntervalId && clearInterval(setIntervalId);
-        retryAttempt();
-      };
-
-      consumer.on("error", () => {
-        retryAttempt();
-      });
-
-      consumer.on("message", (msg: string) => {
-        const { messageId, payload } = JSON.parse(msg);
-        consumer.send(JSON.stringify({ messageId }));
-
-        if (payload !== "noop") {
-          const data = JSON.parse(atob(payload));
-          (typeof cb === "function") && cb(false, data);
-        }
-      });
-
-      consumer.on("close", closeWSConnection);
-    }
-
-    retryOperation.attempt(wsConnAttempt);
-  }
-
   async create(name?: string, cb?: Function) {
     if (typeof name === "string" && !!name) {
       this.name = name;
@@ -220,12 +122,14 @@ export default class Client extends Connection {
     }
 
     this.keyValue = new KeyValue(this._connection, this.name);
-    this.socketConnection = new SocketConnection(this._connection, this.name);
 
     const exist = await this.keyValue.exists();
     if (exist) {
-      const response = { error: true, errorMessage: `${this.name} already exist!!` };
-      (typeof cb === "function") && cb(true, response);
+      const response = {
+        error: true,
+        errorMessage: `${this.name} already exist!!`,
+      };
+      typeof cb === "function" && cb(true, response);
       return response;
     }
 
