@@ -46,23 +46,4 @@ export interface AllKeysOptions {
   offset?: number;
   limit?: number;
   order?: string;
-};
-
-export interface ConnectOptions {
-  keepAlive?: boolean;
-  sendNoopDelay?: number;
-  retries?: number;
-  factor?: number;
-  minTimeout?: number;
-  maxTimeout?: number;
-  randomize?: number | boolean;
-  forever?: boolean;
-};
-
-export type SocketConnections = {
-  terminate: Function
-}
-
-export type RetryOperations = {
-  stop: Function,
 }

@@ -65,7 +65,7 @@ export class Connection {
   private _extractTenantName(apiKey: string) {
     let apiKeyArr = apiKey.split(".");
     apiKeyArr.splice(-2, 2);
-    return apiKeyArr.join(".");
+    return apiKeyArr.join(".") || "_mm";
   }
 
   getTenantName(): string {
