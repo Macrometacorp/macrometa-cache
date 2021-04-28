@@ -20,6 +20,7 @@ const mmcache = require('macrometa-cache'); // Node
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 await cache.create(); // This step is required to create cache in GDN.
 // OR
@@ -66,17 +67,19 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   * `apiKey` (String) api key.
   * `agent` (String | Function) Agent to be used. Default is `fetch`.
   * `fabricName` (String) (optional) Name of the fabric. Default is `_system`.
+  * `name` (String) (optional) Name of the cache to be created. Default is `mmcache`.
   * `ttl` (Number) (optional) Time to live in seconds. -1 means no expiration. Default is `3600 seconds`.
   * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
   * `headers` (Object) (optional) If extra headers need to be provided.
 
   ```javascript
   const options = {
-    url: "https://gdn.paas.macrometa.io";
-    apiKey: "XXXX";
-    agent: "fetch";
-    fabricName: "_system";
-    ttl: 3600;
+    url: "https://gdn.paas.macrometa.io",
+    apiKey: "XXXX",
+    agent: httpRequest,
+    name: "sampleCache",
+    fabricName: "_system",
+    ttl: 3600
   };
 
   const cache = new mmcache(options);
@@ -84,7 +87,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
 ### cache.create([name], [callback]): Promise
 
-  Creates a global KV collection with given name. if not provided it creates with name `mmcache`.
+  Creates a global KV collection with given name. if not provided it creates with name given in options or with default name `mmcache`.
 
   :bulb: **Note:** This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.
 
@@ -96,6 +99,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -133,6 +137,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -165,6 +170,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -189,6 +195,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -211,6 +218,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -231,6 +239,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -251,6 +260,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -285,6 +295,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -323,6 +334,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
@@ -353,6 +365,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
   const cache = new mmcache({
     url: "https://gdn.paas.macrometa.io",
     apiKey: "XXXX",
+    name: "sampleCache"
   });
 
   await cache.create();
