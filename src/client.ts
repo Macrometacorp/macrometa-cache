@@ -28,6 +28,9 @@ export default class Client extends Connection {
     if (config.ttl) {
       this.ttl = config.ttl;
     }
+    if (config.name) {
+      this.name = config.name;
+    }
 
     this.keyValue = new KeyValue(this._connection, this.name);
     this.socketConnection = new SocketConnection(this._connection, this.name);

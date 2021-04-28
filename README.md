@@ -19,6 +19,7 @@ const mmcache = require("macrometa-realtime-cache"); // Node
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 await cache.create(); // This step is required to create cache in GDN.
 // OR
@@ -60,17 +61,19 @@ cache.set("cacheKey", { foo: "bar" }, 120, function (error, data) {
 - `apiKey` (String) api key.
 - `agent` (String | Function) Agent to be used. Default is `fetch`.
 - `fabricName` (String) (optional) Name of the fabric. Default is `_system`.
+- `name` (String) (optional) Name of the cache to be created. Default is `mmcache`.
 - `ttl` (Number) (optional) Time to live in seconds. -1 means no expiration. Default is `3600 seconds`.
 - `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
 - `headers` (Object) (optional) If extra headers need to be provided.
 
 ```javascript
 const options = {
-  url: "https://gdn.paas.macrometa.io";
-  apiKey: "XXXX";
-  agent: "fetch";
-  fabricName: "_system";
-  ttl: 3600;
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+  agent: "fetch",
+  name: "sampleCache",
+  fabricName: "_system",
+  ttl: 3600
 };
 
 const cache = new mmcache(options);
@@ -78,7 +81,7 @@ const cache = new mmcache(options);
 
 ### cache.create([name], [callback]): Promise
 
-Creates a global KV collection with given name. if not provided it creates with name `mmcache`.
+Creates a global KV collection with given name. if not provided it creates with name given in options or with default name `mmcache`.
 
 :bulb: **Note:** This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.
 
@@ -90,6 +93,7 @@ Creates a global KV collection with given name. if not provided it creates with 
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -127,6 +131,7 @@ Cache data or update an existing record.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -159,6 +164,7 @@ Returns cached value of given key.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -182,6 +188,7 @@ Delete cached entry.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -203,6 +210,7 @@ Clears all cached data. Returns number of cleared records.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -222,6 +230,7 @@ Deletes the persistent cache.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -241,6 +250,7 @@ Returns number of cached records.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -274,6 +284,7 @@ Returns list of all keys in a given cache.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -311,6 +322,7 @@ Cache api response or update an existing record.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -347,6 +359,7 @@ Returns cached response.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();
@@ -389,6 +402,7 @@ Returns updated data with key and value in callback for defined KV collection.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
+  name: "sampleCache"
 });
 
 await cache.create();

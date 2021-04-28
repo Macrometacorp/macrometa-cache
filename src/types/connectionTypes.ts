@@ -6,6 +6,7 @@ export interface IConnection {
   ttl?: number;
   absolutePath?: boolean;
   headers?: { [key: string]: string };
+  name?: string;
 };
 
 export interface IOptions {
