@@ -6,7 +6,8 @@ export interface IConnection {
   ttl?: number;
   absolutePath?: boolean;
   headers?: { [key: string]: string };
-};
+  name?: string;
+}
 
 export interface IOptions {
   method: string;
@@ -14,7 +15,7 @@ export interface IOptions {
   body: string;
   path?: string;
   qs?: string | { [key: string]: any };
-};
+}
 
 export interface RequestOptions {
   method?: string;
@@ -22,25 +23,25 @@ export interface RequestOptions {
   path?: string;
   qs?: { [key: string]: any };
   absolutePath?: boolean;
-};
+}
 
 export interface SetResponse {
   url: string;
   data: any;
   params?: { [key: string]: any };
   ttl?: number;
-};
+}
 
 export interface GetResponse {
   url: string;
   params?: { [key: string]: any };
-};
+}
 
 export interface UrlInfo {
   absolutePath?: boolean;
   path?: string;
   qs?: string | { [key: string]: any };
-};
+}
 
 export interface AllKeysOptions {
   offset?: number;
