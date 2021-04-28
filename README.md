@@ -327,7 +327,7 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
   await cache.create();
 
-  cache.setResponse({ url: "http://dummy.restapiexample.com/api/v1/update?qs=123", data: { foo: 'bar' }, ttl: 120}, (error, data) => {
+  cache.setResponse({ url: "http://dummy.restapiexample.com/api/v1/update?qs=123", data: { foo: 'bar' }, ttl: 3600}, (error, data) => {
     
     if (error) throw data.errorMessage;
 
