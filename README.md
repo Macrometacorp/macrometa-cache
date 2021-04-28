@@ -1,20 +1,19 @@
-# macrometa-cache
+# macrometa-realtime-cache
 
 Low latency persistent global side cache library to cache `objects` and `responses` utilizing Macrometa GDN.
 
 ## Installation
 
-``` bash
-$ npm install macrometa-cache
+```bash
+$ npm install macrometa-realtime-cache
 ```
 
 ## Usage
 
 ```javascript
-import mmcache from "macrometa-cache"; // Browser
+import mmcache from "macrometa-realtime-cache"; // Browser
 // OR
-const mmcache = require('macrometa-cache'); // Node
-
+const mmcache = require("macrometa-realtime-cache"); // Node
 
 // Initialize
 const cache = new mmcache({
@@ -27,31 +26,26 @@ await cache.create(); // This step is required to create cache in GDN.
 const cache = new mmcache({
   url: "https://gdn.paas.macrometa.io",
   apiKey: "XXXX",
-  ttl: 120
+  ttl: 120,
 });
 await cache.create("sampleCache");
 
-
 // Set the value
-cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
-
+cache.set("cacheKey", { foo: "bar" }, 120, function (error, data) {
   if (error) throw data.errorMessage;
 
   // get the value
-  cache.get('cacheKey', function (error, data) {
-
+  cache.get("cacheKey", function (error, data) {
     if (error) throw data.errorMessage;
 
     console.log(data.value); //-> { foo: "bar" }
 
     // delete entry
-    cache.delete('cacheKey', function (error, data){
-
+    cache.delete("cacheKey", function (error, data) {
       if (error) throw data.errorMessage;
 
-      console.log('value deleted');
+      console.log("value deleted");
     });
-
   });
 });
 ```
@@ -60,346 +54,348 @@ cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
 
 ### mmcache(options)
 
-  **options** is a dictionary of variables to connect to GDN and default values for KV collection.
+**options** is a dictionary of variables to connect to GDN and default values for KV collection.
 
-  * `url` (String) GDN url. Default is `https://gdn.paas.macrometa.io`
-  * `apiKey` (String) api key.
-  * `agent` (String | Function) Agent to be used. Default is `fetch`.
-  * `fabricName` (String) (optional) Name of the fabric. Default is `_system`.
-  * `ttl` (Number) (optional) Time to live in seconds. -1 means no expiration. Default is `3600 seconds`.
-  * `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
-  * `headers` (Object) (optional) If extra headers need to be provided.
+- `url` (String) GDN url. Default is `https://gdn.paas.macrometa.io`
+- `apiKey` (String) api key.
+- `agent` (String | Function) Agent to be used. Default is `fetch`.
+- `fabricName` (String) (optional) Name of the fabric. Default is `_system`.
+- `ttl` (Number) (optional) Time to live in seconds. -1 means no expiration. Default is `3600 seconds`.
+- `absolutePath` (Boolean) (optional) If absolute path needs to be used. Default is `false`.
+- `headers` (Object) (optional) If extra headers need to be provided.
 
-  ```javascript
-  const options = {
-    url: "https://gdn.paas.macrometa.io";
-    apiKey: "XXXX";
-    agent: "fetch";
-    fabricName: "_system";
-    ttl: 3600;
-  };
+```javascript
+const options = {
+  url: "https://gdn.paas.macrometa.io";
+  apiKey: "XXXX";
+  agent: "fetch";
+  fabricName: "_system";
+  ttl: 3600;
+};
 
-  const cache = new mmcache(options);
-  ```
+const cache = new mmcache(options);
+```
 
 ### cache.create([name], [callback]): Promise
 
-  Creates a global KV collection with given name. if not provided it creates with name `mmcache`.
+Creates a global KV collection with given name. if not provided it creates with name `mmcache`.
 
-  :bulb: **Note:** This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.
+:bulb: **Note:** This step is must after initializing mmcache to create cache in GDN. Skip this step if cache is already created.
 
-  - **name**: `String` (optional)
+- **name**: `String` (optional)
 
-    Name of the KV collection
+  Name of the KV collection
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
-  //OR
+await cache.create();
+//OR
 
-  cache.create((error, data) => {
-    if (error) throw data.errorMessage;
-  });
-  // OR
+cache.create((error, data) => {
+  if (error) throw data.errorMessage;
+});
+// OR
 
-  cache.create("myCache", (error, data) => {
-    if (error) throw data.errorMessage;
-  });
-  ```
+cache.create("myCache", (error, data) => {
+  if (error) throw data.errorMessage;
+});
+```
 
 ### cache.set(`key`, `value`, `[ttl]`, `[callback]`): Promise
 
-  Cache data or update an existing record.
+Cache data or update an existing record.
 
-  - **key**: `String`
+- **key**: `String`
 
-    Unique key identifying the cache entry
+  Unique key identifying the cache entry
 
-  - **value**: `Any`
+- **value**: `Any`
 
-    Value to be Cached.
+  Value to be Cached.
 
-  - **ttl**: `Number` Time to live in seconds (optional)
+- **ttl**: `Number` Time to live in seconds (optional)
 
-    * If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor. 
-    * If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
-    * -1 means no expiration.
+  - If ttl is not specified, then this method uses the `ttl` specified in the mmcache() constructor.
+  - If no `ttl` is specified in the mmcache() constructor then default `ttl` value of 3600 seconds (1 hour) will be used.
+  - -1 means no expiration.
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.set('cacheKey', { foo: 'bar' }, 120, function (error, data) {
+cache.set("cacheKey", { foo: "bar" }, 120, function (error, data) {
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
+  // do something
+});
+// OR
 
-    // do something
-  });
-  // OR
+cache.set("cacheKey", { foo: "bar" }, function (error, data) {
+  // Without ttl
 
-  cache.set('cacheKey', { foo: 'bar' }, function (error, data) { // Without ttl
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
-
-    // do something
-  });
-  ```
+  // do something
+});
+```
 
 ### cache.get(`key`, `[callback]`): Promise
 
-  Returns cached value of given key.
+Returns cached value of given key.
 
-  - **key**: `String`
+- **key**: `String`
 
-    Unique key identifying the cache entry
+  Unique key identifying the cache entry
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.get('cacheKey', function (error, data) {
+cache.get("cacheKey", function (error, data) {
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
-
-    console.log(data.value); //-> { foo: "bar" }
-  });
-  ```
+  console.log(data.value); //-> { foo: "bar" }
+});
+```
 
 ### cache.delete(`key`, `[callback]`): Promise
 
-  Delete cached entry.
+Delete cached entry.
 
-  - **key**: `String`
+- **key**: `String`
 
-    Unique key identifying the cache entry
-    
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+  Unique key identifying the cache entry
 
-  await cache.create();
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  cache.delete('cacheKey', function (error, data){
+await cache.create();
 
-    if (error) throw data.errorMessage;
+cache.delete("cacheKey", function (error, data) {
+  if (error) throw data.errorMessage;
 
-    console.log('value deleted');
-  });
-  ```
+  console.log("value deleted");
+});
+```
 
 ### cache.clear(`[callback]`): Promise
 
-  Clears all cached data. Returns number of cleared records.
+Clears all cached data. Returns number of cleared records.
 
-  :bulb: **Note:** The cache itself is not deleted here.
+:bulb: **Note:** The cache itself is not deleted here.
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.clear((error, data) => {
+cache.clear((error, data) => {
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
-
-    console.log(data.count); // number of cleared records.
-  });
-  ```
+  console.log(data.count); // number of cleared records.
+});
+```
 
 ### cache.deleteCache(`[callback]`): Promise
 
-  Deletes the persistent cache.
+Deletes the persistent cache.
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.deleteCache((error, data) => {
+cache.deleteCache((error, data) => {
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
-
-    console.log('cache deleted');
-  });
-  ```
+  console.log("cache deleted");
+});
+```
 
 ### cache.size(`[callback]`): Promise
-                
-  Returns number of cached records.
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+Returns number of cached records.
 
-  await cache.create();
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  cache.size((error, data) => {
+await cache.create();
 
-    if (error) throw data.errorMessage;
+cache.size((error, data) => {
+  if (error) throw data.errorMessage;
 
-    console.log(data.count); // number of cached records.
-  });
-  ```
+  console.log(data.count); // number of cached records.
+});
+```
 
 ### cache.allKeys(`[opts]`, `[callback]`): Promise
 
-  Returns list of all keys in a given cache.
+Returns list of all keys in a given cache.
 
-  - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
+- **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
 
-    - **offset**: `String`
+  - **offset**: `String`
 
-      This option can be used to simulate paging. Default 0
+    This option can be used to simulate paging. Default 0
 
-    - **limit**: `String`
+  - **limit**: `String`
 
-      This option can be used to simulate paging. Limit the result. Default 100, max 100
+    This option can be used to simulate paging. Limit the result. Default 100, max 100
 
-    - **order**: `String`
+  - **order**: `String`
 
-      Order the results asc or desc. Default asc
+    Order the results asc or desc. Default asc
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.allKeys({offset: 100, limit: 4, order: "desc"}, (error, data) => {
+cache.allKeys({ offset: 100, limit: 4, order: "desc" }, (error, data) => {
+  if (error) throw data.errorMessage;
 
-    if (error) throw data.errorMessage;
-
-    console.log(data); // returns 4 records after 100 with descending order
-  });
-  ```
+  console.log(data); // returns 4 records after 100 with descending order
+});
+```
 
 ### cache.setResponse(`inputs`, `[callback]`): Promise
 
-  Cache api response or update an existing record.
+Cache api response or update an existing record.
 
-  - **inputs**: `Object` is a JS object that can contain any of the following keys:
+- **inputs**: `Object` is a JS object that can contain any of the following keys:
 
-    - **url**: `String`
+  - **url**: `String`
 
-      Api url string.
+    Api url string.
 
-    - **data**: `Any`
+  - **data**: `Any`
 
-      response to be cached.
+    response to be cached.
 
-    - **ttl**: `Number` (optional)
+  - **ttl**: `Number` (optional)
 
-      time to live in seconds. -1 means no expiration.
+    time to live in seconds. -1 means no expiration.
 
-    - **params**: `Object` (optional)
+  - **params**: `Object` (optional)
 
-      Any extra params or request body
+    Any extra params or request body
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.setResponse({ url: "http://dummy.restapiexample.com/api/v1/update?qs=123", data: { foo: 'bar' }, ttl: 120}, (error, data) => {
-    
+cache.setResponse(
+  {
+    url: "http://dummy.restapiexample.com/api/v1/update?qs=123",
+    data: { foo: "bar" },
+    ttl: 120,
+  },
+  (error, data) => {
     if (error) throw data.errorMessage;
 
     // do something
-  });
-  ```
+  }
+);
+```
 
 ### cache.getResponse(`inputs`, `[callback]`): Promise
 
-  Returns cached response.
+Returns cached response.
 
-  - **inputs**: `Object` is a JS object that can contain any of the following keys:
+- **inputs**: `Object` is a JS object that can contain any of the following keys:
 
-    - **url**: `String`
+  - **url**: `String`
 
-      Api url string.
+    Api url string.
 
-    - **params**: `Object` (optional)
+  - **params**: `Object` (optional)
 
-      Any extra params or request body
+    Any extra params or request body
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-  await cache.create();
+await cache.create();
 
-  cache.getResponse({url: "http://dummy.restapiexample.com/api/v1/update?qs=123"}, (error, data) => {
-      
+cache.getResponse(
+  { url: "http://dummy.restapiexample.com/api/v1/update?qs=123" },
+  (error, data) => {
     if (error) throw data.errorMessage;
 
-    console.log(data.value) // { foo: 'bar' }
-  });
-  ```
+    console.log(data.value); // { foo: 'bar' }
+  }
+);
+```
 
 ### cache.onCacheUpdate(`subscriptionName`, [`opts`], [`callback`]):
 
-  Returns updated data with key and value in callback for defined KV collection.
-  
-  :bulb: **Note:** Usage of this api requires websocket support.
+Returns updated data with key and value in callback for defined KV collection.
 
-  - **subscriptionName**: `string` (optional)
+:bulb: **Note:** Usage of this api requires websocket support.
 
-    The name of the subscription.
+- **subscriptionName**: `string` (optional)
 
-  - **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
+  The name of the subscription.
 
-    - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`.
+- **opts**: `Object` (optional) is a JS object that can contain any of the following keys:
 
-        :bulb: **Note:** noop basically a dummy message called no operation.
-    - **sendNoopDelay**: The number of milliseconds after which noop message will be sent. default is `30000`.
-    - **retries**: The maximum amount of times to retry the operation. Default is `10`. Seting this to `1` means `do it once, then retry it once`.
-    - **factor**: The exponential factor to use. Default is `2`.
-    - **minTimeout**: The number of milliseconds before starting the first retry. Default is `1000`.
-    - **maxTimeout**: The maximum number of milliseconds between two retries. Default is `Infinity`.
-    - **randomize**: Randomizes the timeouts by multiplying with a factor between `1` to `2`. Default is `false`.
-    - **forever**: Whether to retry forever, defaults to `false`.
+  - **keepAlive**: This will send noop message after every `sendNoopDelay` to keep connection alive if provided `true`. Default is `false`.
 
-  ```javascript
-  const cache = new mmcache({
-    url: "https://gdn.paas.macrometa.io",
-    apiKey: "XXXX",
-  });
+    :bulb: **Note:** noop basically a dummy message called no operation.
 
-  await cache.create();
+  - **sendNoopDelay**: The number of milliseconds after which noop message will be sent. default is `30000`.
+  - **retries**: The maximum amount of times to retry the operation. Default is `10`. Seting this to `1` means `do it once, then retry it once`.
+  - **factor**: The exponential factor to use. Default is `2`.
+  - **minTimeout**: The number of milliseconds before starting the first retry. Default is `1000`.
+  - **maxTimeout**: The maximum number of milliseconds between two retries. Default is `Infinity`.
+  - **randomize**: Randomizes the timeouts by multiplying with a factor between `1` to `2`. Default is `false`.
+  - **forever**: Whether to retry forever, defaults to `false`.
 
-  cache.onCacheUpdate("my-sub", { retries: 2 }, (error, data) => {
-        
-    if (error) throw data.errorMessage;
+```javascript
+const cache = new mmcache({
+  url: "https://gdn.paas.macrometa.io",
+  apiKey: "XXXX",
+});
 
-    console.log(data);
-  });
-  ```
+await cache.create();
+
+cache.onCacheUpdate("my-sub", { retries: 2 }, (error, data) => {
+  if (error) throw data.errorMessage;
+
+  console.log(data);
+});
+```

@@ -1,5 +1,11 @@
 import { Connection } from "./connection";
-import { IConnection, SetResponse, GetResponse, AllKeysOptions, ConnectOptions } from "./types/connectionTypes";
+import {
+  IConnection,
+  SetResponse,
+  GetResponse,
+  AllKeysOptions,
+  ConnectOptions,
+} from "./types/connectionTypes";
 import { KeyValue } from "./keyValue";
 import { SocketConnection } from "./socketConnection";
 import { getsortedQueryParamsUrl, sha256 } from "./util/index";
@@ -7,7 +13,6 @@ import Retry from "./retry";
 import { atob } from "./util/atob";
 
 export default class Client extends Connection {
-
   private _connection: Connection;
   private name: string = "mmcache";
   private ttl: number = 3600;
@@ -42,13 +47,18 @@ export default class Client extends Connection {
       ttl = this.ttl;
     }
     const ttlVal = !!ttl ? ttl : this.ttl;
-    const expireAt = this.getExpireAtTimeStamp(ttlVal);
+    const expireAt = ttlVal === -1 ? -1 : this.getExpireAtTimeStamp(ttlVal);
 
-    return this.keyValue.insertKVPairs([{
-      _key,
-      value,
-      expireAt
-    }], cb)
+    return this.keyValue.insertKVPairs(
+      [
+        {
+          _key,
+          value,
+          expireAt,
+        },
+      ],
+      cb
+    );
   }
 
   get(key: string, cb?: Function): Promise<any> {
@@ -72,11 +82,11 @@ export default class Client extends Connection {
     const clearData = await this.keyValue.truncate();
 
     if (clearData.error) {
-      (typeof cb === "function") && cb(true, clearData);
+      typeof cb === "function" && cb(true, clearData);
       return clearData;
     }
     const res = { ...count, ...clearData };
-    (typeof cb === "function") && cb(false, res);
+    typeof cb === "function" && cb(false, res);
 
     return res;
   }
@@ -119,7 +129,7 @@ export default class Client extends Connection {
   async onCacheUpdate(
     subscriptionName: string,
     opts: ConnectOptions = {},
-    cb: Function = () => {},
+    cb: Function = () => {}
   ) {
     if (!subscriptionName) {
       throw "Please provide subscription name";
@@ -156,13 +166,20 @@ export default class Client extends Connection {
       const localDcDetails = await this.socketConnection.getLocalEdgeLocation();
       const dcUrl = localDcDetails.tags.url;
       const consumerOtp = await this.socketConnection.getOtp();
-      const consumer = await this.socketConnection.consumer(subscriptionName, dcUrl, consumerOtp);
+      const consumer = await this.socketConnection.consumer(
+        subscriptionName,
+        dcUrl,
+        consumerOtp
+      );
       if (keepAlive) {
         const producerOtp = await this.socketConnection.getOtp();
-        const noopProducer = await this.socketConnection.noopProducer(dcUrl, { ...producerOtp, sendTimeoutMillis: sendNoopDelay });
+        const noopProducer = await this.socketConnection.noopProducer(dcUrl, {
+          ...producerOtp,
+          sendTimeoutMillis: sendNoopDelay,
+        });
         const noopProducerOpenCallback = () => {
           setIntervalId = setInterval(() => {
-            noopProducer.send(JSON.stringify({ payload: 'noop' }));
+            noopProducer.send(JSON.stringify({ payload: "noop" }));
           }, sendNoopDelay);
         };
 
@@ -179,12 +196,20 @@ export default class Client extends Connection {
 
       const retryAttempt = () => {
         if (retryOperation.retry("Retry connecting")) {
-          (typeof cb === "function") && cb(true, { retry: true, errorMessage: `Retry connecting ${self.name}: Attempt ${currentAttempt}` });
+          typeof cb === "function" &&
+            cb(true, {
+              retry: true,
+              errorMessage: `Retry connecting ${self.name}: Attempt ${currentAttempt}`,
+            });
           return;
         } else {
-          (typeof cb === "function") && cb(true, { retry: false, errorMessage: "All retries failed. Connection closed!!" });
+          typeof cb === "function" &&
+            cb(true, {
+              retry: false,
+              errorMessage: "All retries failed. Connection closed!!",
+            });
         }
-      }
+      };
 
       const closeWSConnection = () => {
         setIntervalId && clearInterval(setIntervalId);
@@ -201,12 +226,12 @@ export default class Client extends Connection {
 
         if (payload !== "noop") {
           const data = JSON.parse(atob(payload));
-          (typeof cb === "function") && cb(false, data);
+          typeof cb === "function" && cb(false, data);
         }
       });
 
       consumer.on("close", closeWSConnection);
-    }
+    };
 
     retryOperation.attempt(wsConnAttempt);
   }
@@ -224,8 +249,11 @@ export default class Client extends Connection {
 
     const exist = await this.keyValue.exists();
     if (exist) {
-      const response = { error: true, errorMessage: `${this.name} already exist!!` };
-      (typeof cb === "function") && cb(true, response);
+      const response = {
+        error: true,
+        errorMessage: `${this.name} already exist!!`,
+      };
+      typeof cb === "function" && cb(true, response);
       return response;
     }
 
