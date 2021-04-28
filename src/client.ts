@@ -39,7 +39,7 @@ export default class Client extends Connection {
       ttl = this.ttl;
     }
     const ttlVal = !!ttl ? ttl : this.ttl;
-    const expireAt = this.getExpireAtTimeStamp(ttlVal);
+    const expireAt = ttlVal === -1 ? -1 : this.getExpireAtTimeStamp(ttlVal);
 
     return this.keyValue.insertKVPairs(
       [
@@ -58,7 +58,7 @@ export default class Client extends Connection {
   }
 
   delete(key: string, cb?: Function) {
-    return this.keyValue.deleteEntryForKey(key, cb)
+    return this.keyValue.deleteEntryForKey(key, cb);
   }
 
   deleteCache(cb?: Function) {
