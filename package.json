@@ -1,6 +1,6 @@
 {
   "name": "macrometa-realtime-cache",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "Apache-2.0",
   "description": "The official C8 realtime cache JavaScript driver.",
   "homepage": "https://github.com/macrometacorp/mmcache",
