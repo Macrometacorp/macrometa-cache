@@ -31,7 +31,7 @@ export default class Client extends Connection {
 
   getExpireAtTimeStamp(ttl: number) {
     const currDate = new Date();
-    currDate.setSeconds(ttl);
+    currDate.setSeconds(currDate.getSeconds() + ttl);
 
     return currDate.getTime() / 1000;
   }
